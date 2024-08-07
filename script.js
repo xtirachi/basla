@@ -7,7 +7,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const finishButtons = document.querySelectorAll('.finish-btn');
     const uploadButtons = document.querySelectorAll('.upload-btn');
     const timers = document.querySelectorAll('.timer');
-    
+    const audio = document.querySelector("audio");
+
+// Example: Add custom play/pause buttons
+const playButton = document.getElementById("play-button");
+const pauseButton = document.getElementById("pause-button");
+
+playButton.addEventListener("click", () => {
+    audio.play();
+});
+
+pauseButton.addEventListener("click", () => {
+    audio.pause();
+});
     startButtons.forEach((button, index) => {
         button.addEventListener('click', () => startTimer(timers[index]));
     });
@@ -63,7 +75,7 @@ function logActivity(activityBox, timeSpent, ixtiraCode) {
         timeSpent: timeSpent,
         ixtiraCode: ixtiraCode
     };
-    fetch('https://script.google.com/macros/s/AKfycbxBoGRF6jxg0fIyOELv9wKWOKXa3WlOMCFyJN_2FLWYKuc1Z1f_OcGPaPTBjCEu_166uQ/exec', {
+    fetch('https://script.google.com/macros/s/AKfycby3oe21E18BiocCPdJGR-UxTbuLRZ4N82X-48DJT6cCStL9aoftmJk_jcdG3HvbIliP/exec', {
         method: 'POST',
         body: JSON.stringify(data)
     })
@@ -87,7 +99,7 @@ function uploadFile(index) {
                     base64: base64,
                     ixtiraCode: ixtiraCode
                 };
-                fetch('https://script.google.com/macros/s/AKfycbxBoGRF6jxg0fIyOELv9wKWOKXa3WlOMCFyJN_2FLWYKuc1Z1f_OcGPaPTBjCEu_166uQ/exec', {
+                fetch('https://script.google.com/macros/s/AKfycby3oe21E18BiocCPdJGR-UxTbuLRZ4N82X-48DJT6cCStL9aoftmJk_jcdG3HvbIliP/exec', {
                     method: 'POST',
                     body: JSON.stringify(data)
                 })
