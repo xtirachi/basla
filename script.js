@@ -75,7 +75,7 @@ function logActivity(activityBox, timeSpent, ixtiraCode) {
         timeSpent: timeSpent,
         ixtiraCode: ixtiraCode
     };
-    fetch('https://script.google.com/macros/s/AKfycby3oe21E18BiocCPdJGR-UxTbuLRZ4N82X-48DJT6cCStL9aoftmJk_jcdG3HvbIliP/exec', {
+    fetch('https://script.google.com/macros/s/AKfycbyLJuPhmFw9S24030_bEs1CPR09wTjw2Fe98fcNr4Y1NlfyCqaZCfPxCL2owMyQf1TOzA/exec', {
         method: 'POST',
         body: JSON.stringify(data)
     })
@@ -99,7 +99,7 @@ function uploadFile(index) {
                     base64: base64,
                     ixtiraCode: ixtiraCode
                 };
-                fetch('https://script.google.com/macros/s/AKfycby3oe21E18BiocCPdJGR-UxTbuLRZ4N82X-48DJT6cCStL9aoftmJk_jcdG3HvbIliP/exec', {
+                fetch('https://script.google.com/macros/s/AKfycbyLJuPhmFw9S24030_bEs1CPR09wTjw2Fe98fcNr4Y1NlfyCqaZCfPxCL2owMyQf1TOzA/exec', {
                     method: 'POST',
                     body: JSON.stringify(data)
                 })
