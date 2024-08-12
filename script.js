@@ -2,44 +2,37 @@ function navigateTo(page) {
     window.location.href = page;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const startButtons = document.querySelectorAll('.start-btn');
     const finishButtons = document.querySelectorAll('.finish-btn');
     const uploadButtons = document.querySelectorAll('.upload-btn');
     const timers = document.querySelectorAll('.timer');
-    const audio = document.querySelector("audio");
+    const audio = document.querySelector("#audio");
 
-// Example: Add custom play/pause buttons
-const playButton = document.getElementById("play-button");
-const pauseButton = document.getElementById("pause-button");
-         if (playButton && pauseButton) {
-                playButton.addEventListener("click", () => {
-                    audio.play();
-                });
+    const playButton = document.getElementById("play-button");
+    const pauseButton = document.getElementById("pause-button");
+    const fileInput = document.getElementById('file-input');
 
-                pauseButton.addEventListener("click", () => {
-                    audio.pause();
-                });
-            }
+    if (playButton && pauseButton) {
+        playButton.addEventListener("click", () => {
+            audio.play();
+        });
 
+        pauseButton.addEventListener("click", () => {
+            audio.pause();
+        });
+    }
 
-playButton.addEventListener("click", () => {
-    audio.play();
-});
-
-pauseButton.addEventListener("click", () => {
-    audio.pause();
-});
     startButtons.forEach((button, index) => {
         button.addEventListener('click', () => startTimer(timers[index]));
     });
-    
+
     finishButtons.forEach((button, index) => {
         button.addEventListener('click', () => stopTimer(timers[index]));
     });
 
-    uploadButtons.forEach((button, index) => {
-        button.addEventListener('click', () => uploadFile(index));
+    uploadButtons.forEach((button) => {
+        button.addEventListener('click', () => uploadFile(fileInput));
     });
 });
 
@@ -89,19 +82,24 @@ function logActivity(activityBox, timeSpent, ixtiraCode) {
         method: 'POST',
         body: JSON.stringify(data)
     })
-    .then(response => response.json())
-    .then(result => console.log(result))
-    .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(result => console.log(result))
+        .catch(error => console.error('Error:', error));
 }
 
-function uploadFile(index) {
-    const fileInput = document.querySelectorAll('.upload')[index];
+function uploadFile(fileInput) {
+    if (!fileInput) {
+        alert('File input element not found');
+        return;
+    }
+
     const file = fileInput.files[0];
     if (file) {
+        console.log("File selected: ", file.name);
         const ixtiraCode = prompt("İxtiraçı kodunu daxil edin:");
         if (ixtiraCode) {
             const reader = new FileReader();
-            reader.onloadend = function() {
+            reader.onloadend = function () {
                 const base64 = reader.result.split(',')[1];
                 const data = {
                     fileName: file.name,
@@ -109,17 +107,82 @@ function uploadFile(index) {
                     base64: base64,
                     ixtiraCode: ixtiraCode
                 };
+                console.log("Uploading file: ", data);
                 fetch('https://script.google.com/macros/s/AKfycbyLJuPhmFw9S24030_bEs1CPR09wTjw2Fe98fcNr4Y1NlfyCqaZCfPxCL2owMyQf1TOzA/exec', {
                     method: 'POST',
                     body: JSON.stringify(data)
                 })
-                .then(response => response.json())
-                .then(result => {
-                    alert('File uploaded successfully: ' + result.fileUrl);
-                })
-                .catch(error => console.error('Error:', error));
+                    .then(response => response.json())
+                    .then(result => {
+                        alert('File uploaded successfully: ' + result.fileUrl);
+                    })
+                    .catch(error => console.error('Error:', error));
             };
             reader.readAsDataURL(file);
         }
+    } else {
+        alert('No file selected');
     }
 }
+
+let swiperOptions = {
+    // Optional parameters
+    // direction: 'horizontal',
+    slidesPerView: "auto",
+    centeredSlides: true,
+    spaceBetween: 20,
+    loop: true,
+
+    // If we need pagination
+    pagination: {
+        el: '.swiper-pagination',
+    },
+
+    // Navigation arrows
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+    },
+
+    // And if we need scrollbar
+    scrollbar: {
+        el: '.swiper-scrollbar',
+    },
+}
+
+let swiper = null;
+function gridView() {
+    let container = document.getElementById('viewContainer');
+    if (container.classList.contains('grid-view')) {
+        return;
+    }
+    if (swiper !== null) {
+        swiper.destroy();
+    }
+    container.classList.remove('slider-view')
+    container.classList.add('grid-view')
+
+    document.getElementById('gridViewButton').classList.add('disable');
+    document.getElementById('sliderViewButton').classList.remove('disable');
+}
+
+function sliderView() {
+    let container = document.getElementById('viewContainer');
+    if (container.classList.contains('slider-view')) {
+        return;
+    }
+    swiper = new Swiper('.swiper', swiperOptions);
+    container.classList.remove('grid-view')
+    container.classList.add('slider-view')
+    document.getElementById('gridViewButton').classList.remove('disable');
+    document.getElementById('sliderViewButton').classList.add('disable');
+}
+
+
+(() => {
+    if (window.innerWidth > 500) {
+        gridView();
+    } else {
+        sliderView();
+    }
+})();
