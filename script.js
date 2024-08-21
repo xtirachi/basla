@@ -87,7 +87,8 @@ function logActivity(activityBox, timeSpent, ixtiraCode) {
         .catch(error => console.error('Error:', error));
 }
 
-function uploadFile(fileInput) {
+document.querySelector('.upload-btn').addEventListener('click', function() {
+    const fileInput = document.querySelector('.upload');
     if (!fileInput) {
         alert('File input element not found');
         return;
