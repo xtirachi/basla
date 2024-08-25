@@ -49,11 +49,20 @@ main {
 
 p {
     color: #d1c7e4;
-    font-size: 18px;
-    max-width: 800px;
+    font-size: 16px;
+    max-width: 500px;
     text-align: center;
-    margin-bottom: 30px;
-    line-height: 2.9;
+    margin-bottom: 15x;
+    line-height: 1.7;
+}
+
+p1 {
+    color: #d1c7e4;
+    font-size: 15px;
+    max-width: 500px;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.5;
 }
 
 button {
@@ -73,6 +82,134 @@ button {
 button:hover {
     background-color: #fc8404;
     transform: scale(1.05);
+}
+
+/* Code button */
+#medeniyyet-button {
+    display: block;
+    margin: 20px auto;
+    padding: 40px 180px;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(200, 200, 300, 0.6);
+    background-image: url('https://github.com/xtirachi/ixtiraci-web-app/blob/main/code.png?raw=true');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+      background-color: rgba(155, 99, 101, 0.8);
+    background-blend-mode: overlay;
+  position: relative;
+    height: 100px; /* Fixed height to ensure space for text positioning */
+  line-height: 55px; /* Helps position text within the height */
+    text-align: center;
+    vertical-align: bottom;
+}
+
+#medeniyyet-button:hover {
+    background-color: #FF4500;
+    transform: scale(1.05);
+    /* Hover effect for the start button */
+}
+
+/* Code button */
+#incesenet-button {
+    display: block;
+    margin: 20px auto;
+    padding: 40px 180px;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(200, 200, 300, 0.6);
+    background-image: url('https://github.com/xtirachi/ixtiraci-web-app/blob/main/code.png?raw=true');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+      background-color: rgba(155, 99, 101, 0.8);
+    background-blend-mode: overlay;
+  position: relative;
+    height: 100px; /* Fixed height to ensure space for text positioning */
+  line-height: 55px; /* Helps position text within the height */
+    text-align: center;
+    vertical-align: bottom;
+}
+
+#incesenet-button:hover {
+    background-color: #FF4500;
+    transform: scale(1.05);
+    /* Hover effect for the start button */
+}
+
+/* Code button */
+#eksperiment-button {
+    display: block;
+    margin: 20px auto;
+    padding: 40px 180px;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(200, 200, 300, 0.6);
+    background-image: url('https://github.com/xtirachi/ixtiraci-web-app/blob/main/code.png?raw=true');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+      background-color: rgba(155, 99, 101, 0.8);
+    background-blend-mode: overlay;
+  position: relative;
+    height: 100px; /* Fixed height to ensure space for text positioning */
+  line-height: 55px; /* Helps position text within the height */
+    text-align: center;
+    vertical-align: bottom;
+}
+
+#eksperiment-button:hover {
+    background-color: #FF4500;
+    transform: scale(1.05);
+    /* Hover effect for the start button */
+}
+
+/* Code button */
+#steam-button {
+    display: block;
+    margin: 20px auto;
+    padding: 40px 180px;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    font-size: 20px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(200, 200, 300, 0.6);
+    background-image: url('https://github.com/xtirachi/ixtiraci-web-app/blob/main/code.png?raw=true');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+      background-color: rgba(155, 99, 101, 0.8);
+    background-blend-mode: overlay;
+  position: relative;
+    height: 100px; /* Fixed height to ensure space for text positioning */
+  line-height: 55px; /* Helps position text within the height */
+    text-align: center;
+    vertical-align: bottom;
+}
+
+#steam-button:hover {
+    background-color: #FF4500;
+    transform: scale(1.05);
+    /* Hover effect for the start button */
 }
 
 .activity-container {
@@ -265,12 +402,40 @@ audio {
     p {
         font-size: 16px;
     }
+  
+  p1 {
+        font-size: 15px;
+    }
 
     button {
         padding: 12px 25px;
         font-size: 14px;
     }
+  
+   #medeniyyet-button {
+    margin: 20px auto;
+    padding: 40px 60px;
+    font-size: 1.1em;
+}
 
+   #incesenet-button {
+    margin: 20px auto;
+    padding: 40px 60px;
+    font-size: 1.1em;
+}
+  
+   #eksperiment-button {
+    margin: 20px auto;
+    padding: 40px 60px;
+    font-size: 1.1em;
+}
+  
+   #steam-button {
+    margin: 20px auto;
+    padding: 40px 60px;
+    font-size: 1.1em;
+}
+  
     .activity-container {
         /*flex-direction: column;*/
         /*overflow-y: auto;*/
@@ -315,8 +480,6 @@ audio {
 @media (max-width: 375px) {
     audio {
         width: 250px;
-         display: block; /* Ensure it's visible */
-  width: 100%; 
     }
 }
 /* You can style the audio player here */
