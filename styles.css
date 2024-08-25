@@ -315,6 +315,8 @@ audio {
 @media (max-width: 375px) {
     audio {
         width: 250px;
+         display: block; /* Ensure it's visible */
+  width: 100%; 
     }
 }
 /* You can style the audio player here */
