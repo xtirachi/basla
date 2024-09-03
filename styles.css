@@ -99,7 +99,7 @@ button:hover {
     font-weight: bold;
     box-shadow: 0 4px 10px rgba(200, 200, 300, 0.6);
     background-image: url('https://github.com/xtirachi/basla/blob/main/medeniyyet.png?raw=true');
-    background-size: cover;
+background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
       background-color: rgba(155, 99, 101, 0.8);
@@ -131,7 +131,7 @@ button:hover {
     font-weight: bold;
     box-shadow: 0 4px 10px rgba(200, 200, 300, 0.6);
     background-image: url('https://github.com/xtirachi/basla/blob/main/incesenet.png?raw=true');
-    background-size: cover;
+    background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
       background-color: rgba(155, 99, 101, 0.8);
@@ -163,7 +163,7 @@ button:hover {
     font-weight: bold;
     box-shadow: 0 4px 10px rgba(200, 200, 300, 0.6);
     background-image: url('https://github.com/xtirachi/basla/blob/main/eksperiment.png?raw=true');
-    background-size: cover;
+background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
       background-color: rgba(155, 99, 101, 0.8);
@@ -195,7 +195,7 @@ button:hover {
     font-weight: bold;
     box-shadow: 0 4px 10px rgba(200, 200, 300, 0.6);
     background-image: url('https://github.com/xtirachi/basla/blob/main/steam.png?raw=true');
-    background-size: cover;
+background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
       background-color: rgba(155, 99, 101, 0.8);
