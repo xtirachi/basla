@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vurma Ustası — Vurma Cədvəlini Öyrən</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5FAF3;
+    --bg-card:#FFFFFF;
+    --primary:#2FBF71;
+    --primary-dark:#1B8A54;
+    --primary-light:#DFF6E8;
+    --accent:#FF8A5B;
+    --accent-dark:#D6572B;
+    --accent-light:#FFE7DA;
+    --gold:#FFC94A;
+    --gold-dark:#8A6300;
+    --blue:#3DA9FC;
+    --ink:#1F2A24;
+    --muted:#6B7A72;
+    --error:#E23B3B;
+    --error-light:#FFE1E1;
+    --radius-lg:28px;
+    --radius-md:18px;
+    --radius-sm:12px;
+    --shadow:0 8px 20px rgba(31,42,36,0.08);
+    --font-display:'Baloo 2','Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --font-body:'Nunito',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:linear-gradient(160deg,#EAF3EC,#FBF6EA);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    font-family:var(--font-body);
+    color:var(--ink);
+  }
+  button{font-family:inherit;}
+  button:focus-visible, .node:focus-visible{outline:3px solid var(--blue);outline-offset:2px;}
+
+  .app-shell{
+    width:100%;
+    max-width:480px;
+    background:var(--bg);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    height:100dvh;
+    overflow:hidden;
+  }
+  @media (min-width:560px){
+    body{padding:24px 0;}
+    .app-shell{height:calc(100vh - 48px);height:calc(100dvh - 48px);border-radius:32px;box-shadow:0 24px 60px rgba(31,42,36,0.18);}
+  }
+
+  /* Header */
+  .header{
+    position:sticky;top:0;z-index:10;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:calc(14px + env(safe-area-inset-top)) 18px 14px;
+    background:rgba(245,250,243,0.94);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid rgba(31,42,36,0.06);
+  }
+  .brand{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:700;font-size:1.15rem;color:var(--primary-dark);}
+  .brand-emoji{font-size:1.5rem;}
+  .stats{display:flex;align-items:center;gap:8px;}
+  .stat-pill{display:flex;align-items:center;gap:4px;background:var(--bg-card);padding:6px 10px;border-radius:999px;box-shadow:var(--shadow);font-weight:800;font-size:0.85rem;}
+  .icon-btn{background:var(--bg-card);border:none;width:34px;height:34px;border-radius:50%;box-shadow:var(--shadow);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);}
+
+  .main{flex:1;overflow-y:auto;position:relative;}
+  .screen{display:none;}
+  .screen.active{display:flex;flex-direction:column;min-height:100%;}
+
+  /* Path screen */
+  .path-intro{padding:18px 24px 4px;text-align:center;}
+  .path-intro h1{font-family:var(--font-display);font-size:1.3rem;margin:0 0 4px;color:var(--ink);}
+  .path-intro p{margin:0;color:var(--muted);font-weight:700;font-size:0.92rem;}
+  .path{
+    flex:1;
+    padding:28px 24px 50px;
+    display:flex;
+    flex-direction:column-reverse;
+    align-items:stretch;
+    gap:8px;
+    position:relative;
+  }
+  .path::before{
+    content:'';position:absolute;left:50%;top:20px;bottom:20px;
+    border-left:4px dashed var(--primary-light);
+    transform:translateX(-50%);z-index:0;
+  }
+  .node-row{display:flex;width:100%;position:relative;z-index:1;}
+  .jc-left{justify-content:flex-start;padding-left:8px;}
+  .jc-center{justify-content:center;}
+  .jc-right{justify-content:flex-end;padding-right:8px;}
+  .node-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;}
+  .node{
+    width:74px;height:74px;border-radius:50%;border:none;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:800;font-size:1.55rem;
+    cursor:pointer;transition:transform .12s ease;
+    background:var(--bg-card);color:var(--primary-dark);
+    border:3px solid var(--primary);
+    box-shadow:0 5px 0 var(--primary-light), var(--shadow);
+  }
+  .node--fresh{background:var(--bg-card);color:var(--primary-dark);border-color:var(--primary);box-shadow:0 5px 0 var(--primary-light), var(--shadow);}
+  .node--tryagain{background:var(--accent-dark);color:#fff;border:3px solid var(--accent-dark);box-shadow:0 5px 0 #A9421C, var(--shadow);}
+  .node--progress{background:var(--primary-dark);color:#fff;border:3px solid var(--primary-dark);box-shadow:0 5px 0 #145E3B, var(--shadow);}
+  .node--mastered{background:var(--gold);color:var(--gold-dark);border:3px solid var(--gold);box-shadow:0 5px 0 #C79A2E, var(--shadow);}
+  .node:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,0.15) !important;}
+  .node--mix{font-size:1.9rem;}
+  .node-caption{font-weight:800;font-size:0.78rem;color:var(--muted);}
+  .stars-row{font-size:0.85rem;color:var(--gold);letter-spacing:1px;}
+  .stars-row .empty{color:#D8E2DB;}
+
+  /* Lesson screen */
+  .subheader{display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top)) 18px 12px;border-bottom:1px solid rgba(31,42,36,0.06);}
+  .back-btn{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--primary-dark);width:32px;height:32px;display:flex;align-items:center;justify-content:center;}
+  .subheader h2{font-family:var(--font-display);font-size:1.1rem;margin:0;color:var(--ink);flex:1;}
+  .lesson-body{padding:22px 20px 30px;flex:1;display:flex;flex-direction:column;}
+  .facts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .fact-card{background:var(--bg-card);border-radius:var(--radius-md);padding:16px 8px;text-align:center;font-family:var(--font-display);font-weight:700;font-size:1.05rem;box-shadow:var(--shadow);color:var(--ink);}
+  .mix-info{background:var(--bg-card);border-radius:var(--radius-md);padding:22px;text-align:center;box-shadow:var(--shadow);}
+  .mix-info .mix-emoji{font-size:2.4rem;display:block;margin-bottom:8px;}
+  .mix-info p{margin:0;color:var(--muted);font-weight:700;line-height:1.5;}
+  .lesson-cta{margin-top:auto;padding-top:24px;}
+
+  .btn-primary,.btn-secondary{
+    width:100%;padding:15px 20px;border-radius:999px;font-family:var(--font-display);
+    font-weight:700;font-size:1.05rem;cursor:pointer;transition:transform .1s ease;
+  }
+  .btn-primary{background:var(--primary-dark);color:#fff;border:none;box-shadow:0 5px 0 #145E3B;}
+  .btn-primary:active{transform:translateY(4px);box-shadow:0 1px 0 #145E3B;}
+  .btn-secondary{background:var(--bg-card);color:var(--primary-dark);border:2px solid var(--primary-light);margin-top:10px;}
+  .btn-secondary:active{transform:translateY(2px);}
+
+  /* Quiz screen */
+  .quiz-topbar{display:flex;align-items:center;gap:12px;padding:calc(12px + env(safe-area-inset-top)) 18px 12px;border-bottom:1px solid rgba(31,42,36,0.06);}
+  .close-btn{background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--muted);width:30px;}
+  .progress-track{flex:1;height:12px;background:var(--primary-light);border-radius:999px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--primary);border-radius:999px;transition:width .3s ease;width:0%;}
+  .quiz-counter{font-weight:800;font-size:0.85rem;color:var(--muted);min-width:36px;text-align:right;}
+
+  .quiz-body{flex:1;display:flex;flex-direction:column;position:relative;padding:26px 22px calc(150px + env(safe-area-inset-bottom));}
+  .quiz-prompt{font-family:var(--font-display);font-weight:800;font-size:2rem;text-align:center;margin:20px 0 30px;color:var(--ink);}
+  .quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .quiz-options--tf{grid-template-columns:1fr;}
+  .answer-btn{
+    background:var(--bg-card);border:2px solid #E4EDE6;border-radius:var(--radius-md);
+    padding:18px 10px;font-weight:800;font-size:1.05rem;color:var(--ink);cursor:pointer;
+    transition:transform .08s ease;
+  }
+  .answer-btn:active{transform:scale(0.97);}
+  .answer-btn:disabled{cursor:default;}
+  .answer-btn.is-correct{background:var(--primary-light);border-color:var(--primary-dark);color:var(--primary-dark);}
+  .answer-btn.is-wrong{background:var(--error-light);border-color:var(--error);color:#A32C2C;}
+
+  .feedback-banner{
+    position:absolute;left:0;right:0;bottom:0;
+    padding:16px 22px calc(18px + env(safe-area-inset-bottom));
+    transform:translateY(110%);transition:transform .25s ease;
+    display:flex;flex-direction:column;gap:12px;
+    border-top:2px solid transparent;
+  }
+  .feedback-banner.show{transform:translateY(0);}
+  .feedback-banner.correct{background:var(--primary-light);border-color:var(--primary-dark);}
+  .feedback-banner.wrong{background:var(--error-light);border-color:var(--error);}
+  .feedback-msg{font-family:var(--font-display);font-weight:800;font-size:1.05rem;}
+  .feedback-banner.correct .feedback-msg{color:var(--primary-dark);}
+  .feedback-banner.wrong .feedback-msg{color:#A32C2C;}
+  .feedback-banner .btn-primary{margin:0;}
+  .feedback-banner.wrong .btn-primary{background:var(--error);box-shadow:0 5px 0 #A32C2C;}
+  .feedback-banner.wrong .btn-primary:active{box-shadow:0 1px 0 #A32C2C;}
+
+  /* Result screen */
+  .result-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 30px calc(30px + env(safe-area-inset-bottom));text-align:center;}
+  .result-emoji{font-size:3rem;margin-bottom:6px;}
+  .result-title{font-family:var(--font-display);font-weight:800;font-size:1.5rem;margin:0 0 14px;color:var(--ink);}
+  .big-stars{margin-bottom:18px;}
+  .big-star{display:inline-block;font-size:2.6rem;color:#DEE7E1;margin:0 4px;}
+  .big-star.earned{color:var(--gold);animation:popIn .45s ease both;}
+  .big-star.earned:nth-child(1){animation-delay:.05s;}
+  .big-star.earned:nth-child(2){animation-delay:.2s;}
+  .big-star.earned:nth-child(3){animation-delay:.35s;}
+  @keyframes popIn{0%{transform:scale(0);opacity:0;}70%{transform:scale(1.18);opacity:1;}100%{transform:scale(1);}}
+  .result-stats{font-weight:800;color:var(--muted);margin:2px 0;}
+  .result-xp{font-weight:800;color:var(--accent-dark);margin:2px 0 26px;}
+  .result-actions{width:100%;max-width:280px;}
+
+  /* Modal */
+  .modal-overlay{position:absolute;inset:0;background:rgba(31,42,36,0.45);display:flex;align-items:center;justify-content:center;z-index:50;opacity:0;pointer-events:none;transition:opacity .2s ease;}
+  .modal-overlay.show{opacity:1;pointer-events:auto;}
+  .modal-card{background:#fff;border-radius:var(--radius-md);padding:26px 24px;max-width:300px;text-align:center;box-shadow:var(--shadow);}
+  .modal-card h3{font-family:var(--font-display);margin:0 0 8px;font-size:1.1rem;}
+  .modal-card p{color:var(--muted);font-weight:700;font-size:0.9rem;margin:0 0 20px;}
+  .modal-actions{display:flex;flex-direction:column;gap:8px;}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:0.01ms !important;transition-duration:0.01ms !important;}
+  }
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <header class="header">
+    <div class="brand"><span class="brand-emoji">🦉</span>Vurma Ustası</div>
+    <div class="stats">
+      <div class="stat-pill">⚡ <span id="xpVal">0</span></div>
+      <div class="stat-pill">🔥 <span id="comboVal">0</span></div>
+      <button class="icon-btn" id="resetBtn" aria-label="Nəticələri sıfırla" title="Nəticələri sıfırla">↺</button>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- PATH SCREEN -->
+    <section id="screen-path" class="screen active">
+      <div class="path-intro">
+        <h1>Cədvəlini seç</h1>
+        <p>Bütün cədvəllər açıqdır — istədiyini seç 👇</p>
+      </div>
+      <div class="path" id="pathContainer"></div>
+    </section>
+
+    <!-- LESSON SCREEN -->
+    <section id="screen-lesson" class="screen">
+      <div class="subheader">
+        <button class="back-btn" id="lessonBackBtn" aria-label="Geri">←</button>
+        <h2 id="lessonTitle">2 cədvəli</h2>
+      </div>
+      <div class="lesson-body">
+        <div class="facts-grid" id="factsGrid"></div>
+        <div class="mix-info" id="mixInfo" style="display:none;">
+          <span class="mix-emoji">🔀</span>
+          <p>2-dən 10-a qədər bütün cədvəllərdən qarışıq suallar. Özünü sına!</p>
+        </div>
+        <div class="lesson-cta">
+          <button class="btn-primary" id="startQuizBtn">Məşqə başla</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ SCREEN -->
+    <section id="screen-quiz" class="screen">
+      <div class="quiz-topbar">
+        <button class="close-btn" id="quizCloseBtn" aria-label="Bağla">✕</button>
+        <div class="progress-track"><div class="progress-fill" id="quizProgressFill"></div></div>
+        <div class="quiz-counter" id="quizCounter">1/10</div>
+      </div>
+      <div class="quiz-body">
+        <div class="quiz-prompt" id="quizPrompt">3 × 4 = ?</div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="feedback-banner" id="feedbackBanner">
+          <div class="feedback-msg" id="feedbackMsg">Əla!</div>
+          <button class="btn-primary" id="continueBtn">Davam et</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT SCREEN -->
+    <section id="screen-result" class="screen">
+      <div class="result-body">
+        <div class="result-emoji">🎉</div>
+        <h2 class="result-title" id="resultTitle">Mükəmməl nəticə!</h2>
+        <div class="big-stars" id="resultStars"></div>
+        <div class="result-stats" id="resultStats">Doğru cavab: 9/10</div>
+        <div class="result-xp" id="resultXp">+18 XP qazandın</div>
+        <div class="result-actions">
+          <button class="btn-primary" id="retryBtn">Yenidən cəhd et</button>
+          <button class="btn-secondary" id="mapBtn">Xəritəyə qayıt</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="modal-overlay" id="resetModal">
+    <div class="modal-card">
+      <h3>Nəticələri sıfırla?</h3>
+      <p>Bütün ulduzların, XP-n və irəliləyişin silinəcək.</p>
+      <div class="modal-actions">
+        <button class="btn-primary" id="resetConfirm">Bəli, sıfırla</button>
+        <button class="btn-secondary" id="resetCancel">İmtina et</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var TABLES_ORDER = [2,3,4,5,6,7,8,9,10,'mix'];
+  var POS_MSGS = ['Əla!','Doğrudur!','Möhtəşəm!','Sən bacarırsan!','Tam düz!','Super!'];
+
+  var progress = null;
+  var state = {
+    currentTable: null,
+    questions: [],
+    qIndex: 0,
+    correctCount: 0,
+    comboCurrent: 0,
+    comboSessionBest: 0,
+    answered: false
+  };
+
+  function defaultProgress(){
+    var tables = {};
+    TABLES_ORDER.forEach(function(t){
+      tables[t] = { bestStars:0, bestCorrect:0, attempts:0 };
+    });
+    return { xp:0, bestCombo:0, tables: tables };
+  }
+
+  function normalizeProgress(p){
+    var def = defaultProgress();
+    if(!p || typeof p !== 'object') return def;
+    var merged = {
+      xp: typeof p.xp === 'number' ? p.xp : 0,
+      bestCombo: typeof p.bestCombo === 'number' ? p.bestCombo : 0,
+      tables: {}
+    };
+    TABLES_ORDER.forEach(function(t){
+      var src = (p.tables && p.tables[t]) || {};
+      merged.tables[t] = {
+        bestStars: src.bestStars || 0,
+        bestCorrect: src.bestCorrect || 0,
+        attempts: src.attempts || 0
+      };
+    });
+    return merged;
+  }
+
+  async function loadProgress(){
+    try{
+      var res = await window.storage.get('progress', false);
+      if(res && res.value) return JSON.parse(res.value);
+    }catch(e){ /* not found or unavailable, fall through to default */ }
+    return null;
+  }
+
+  async function saveProgress(p){
+    try{
+      await window.storage.set('progress', JSON.stringify(p), false);
+    }catch(e){
+      console.error('Nəticələr saxlanmadı:', e);
+    }
+  }
+
+  function shuffle(arr){
+    for(var i=arr.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var tmp = arr[i]; arr[i]=arr[j]; arr[j]=tmp;
+    }
+    return arr;
+  }
+  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+  function pick(arr){ return arr[randInt(0,arr.length-1)]; }
+
+  /* ---------- Question generation ---------- */
+  function makeMC(a,b,product){
+    var opts = new Set([product]);
+    var guard = 0;
+    while(opts.size < 4 && guard < 50){
+      guard++;
+      var delta = randInt(-9,9) * randInt(1,2);
+      var cand = product + delta;
+      if(cand > 0 && !opts.has(cand)) opts.add(cand);
+    }
+    var options = shuffle(Array.from(opts)).map(String);
+    return { type:'mc', prompt: a+' × '+b+' = ?', options: options, correct: String(product) };
+  }
+  function makeTF(a,b,product){
+    var isTrue = Math.random() < 0.5;
+    var shown = product;
+    if(!isTrue){
+      var delta;
+      var guard = 0;
+      do{
+        delta = randInt(-6,6);
+        guard++;
+      } while((delta === 0 || product+delta <= 0) && guard < 30);
+      if(delta === 0) delta = 2;
+      shown = Math.max(1, product+delta);
+      if(shown === product) shown = product + 2;
+    }
+    return { type:'tf', prompt: a+' × '+b+' = '+shown, options:['Doğrudur','Yanlışdır'], correct: isTrue ? 'Doğrudur' : 'Yanlışdır' };
+  }
+  function makeFactor(a,b,product){
+    var opts = new Set([b]);
+    var guard = 0;
+    while(opts.size < 4 && guard < 50){
+      guard++;
+      var cand = randInt(1,10);
+      if(!opts.has(cand)) opts.add(cand);
+    }
+    var options = shuffle(Array.from(opts)).map(String);
+    return { type:'factor', prompt: a+' × ? = '+product, options: options, correct: String(b) };
+  }
+  function makeQuestion(a,b){
+    var product = a*b;
+    var roll = Math.random();
+    if(roll < 0.5) return makeMC(a,b,product);
+    if(roll < 0.75) return makeTF(a,b,product);
+    return makeFactor(a,b,product);
+  }
+  function buildQuestions(t, count){
+    var pool = [];
+    if(t === 'mix'){
+      for(var a=2; a<=10; a++){
+        for(var b=1; b<=10; b++) pool.push([a,b]);
+      }
+    } else {
+      for(var m=1; m<=10; m++) pool.push([t,m]);
+    }
+    shuffle(pool);
+    var chosen = pool.slice(0, count);
+    return chosen.map(function(pair){ return makeQuestion(pair[0], pair[1]); });
+  }
+
+  /* ---------- Rendering ---------- */
+  function renderHeader(){
+    document.getElementById('xpVal').textContent = progress.xp;
+    document.getElementById('comboVal').textContent = progress.bestCombo;
+  }
+
+  function starsRowHtml(n){
+    var out = '';
+    for(var i=0;i<3;i++){
+      out += i < n ? '★' : '<span class="empty">☆</span>';
+    }
+    return out;
+  }
+  function nodeStateClass(stars, attempts){
+    if(!attempts) return 'node--fresh';
+    if(stars >= 3) return 'node--mastered';
+    if(stars >= 1) return 'node--progress';
+    return 'node--tryagain';
+  }
+
+  function renderPath(){
+    var container = document.getElementById('pathContainer');
+    container.innerHTML = '';
+    var aligns = ['center','right','center','left'];
+    TABLES_ORDER.forEach(function(t, i){
+      var align = aligns[i % aligns.length];
+      var entry = progress.tables[t];
+
+      var row = document.createElement('div');
+      row.className = 'node-row jc-' + align;
+
+      var wrap = document.createElement('div');
+      wrap.className = 'node-wrap';
+
+      var btn = document.createElement('button');
+      btn.className = 'node ' + nodeStateClass(entry.bestStars, entry.attempts) + (t === 'mix' ? ' node--mix' : '');
+      btn.setAttribute('aria-label', t === 'mix' ? 'Qarışıq təkrar' : (t + ' cədvəli'));
+      btn.textContent = t === 'mix' ? '🔀' : String(t);
+      btn.addEventListener('click', function(){ openLesson(t); });
+
+      var cap = document.createElement('div');
+      cap.className = 'node-caption';
+      cap.textContent = t === 'mix' ? 'Qarışıq təkrar' : (t + ' cədvəli');
+
+      wrap.appendChild(btn);
+      wrap.appendChild(cap);
+
+      if(entry.attempts > 0){
+        var starsEl = document.createElement('div');
+        starsEl.className = 'stars-row';
+        starsEl.innerHTML = starsRowHtml(entry.bestStars);
+        wrap.appendChild(starsEl);
+      }
+
+      row.appendChild(wrap);
+      container.appendChild(row);
+    });
+  }
+
+  function openLesson(t){
+    state.currentTable = t;
+    renderLesson(t);
+    switchScreen('lesson');
+  }
+  function renderLesson(t){
+    document.getElementById('lessonTitle').textContent = t === 'mix' ? 'Qarışıq təkrar' : (t + ' cədvəli');
+    var grid = document.getElementById('factsGrid');
+    var info = document.getElementById('mixInfo');
+    if(t === 'mix'){
+      grid.style.display = 'none';
+      info.style.display = 'block';
+    } else {
+      info.style.display = 'none';
+      grid.style.display = 'grid';
+      grid.innerHTML = '';
+      for(var m=1; m<=10; m++){
+        var card = document.createElement('div');
+        card.className = 'fact-card';
+        card.textContent = t + ' × ' + m + ' = ' + (t*m);
+        grid.appendChild(card);
+      }
+    }
+  }
+
+  function startQuiz(t){
+    state.currentTable = t;
+    state.questions = buildQuestions(t, t === 'mix' ? 12 : 10);
+    state.qIndex = 0;
+    state.correctCount = 0;
+    state.comboCurrent = 0;
+    state.comboSessionBest = 0;
+    state.answered = false;
+    switchScreen('quiz');
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    state.answered = false;
+    var q = state.questions[state.qIndex];
+    document.getElementById('quizProgressFill').style.width = ((state.qIndex/state.questions.length)*100) + '%';
+    document.getElementById('quizCounter').textContent = (state.qIndex+1) + '/' + state.questions.length;
+    document.getElementById('quizPrompt').textContent = q.prompt;
+
+    var optsContainer = document.getElementById('quizOptions');
+    optsContainer.innerHTML = '';
+    optsContainer.className = 'quiz-options' + (q.type === 'tf' ? ' quiz-options--tf' : '');
+    q.options.forEach(function(opt){
+      var b = document.createElement('button');
+      b.className = 'answer-btn';
+      b.type = 'button';
+      b.textContent = opt;
+      b.addEventListener('click', function(){ selectAnswer(opt, b); });
+      optsContainer.appendChild(b);
+    });
+    hideFeedback();
+  }
+
+  function selectAnswer(opt, btnEl){
+    if(state.answered) return;
+    state.answered = true;
+    var q = state.questions[state.qIndex];
+    var isCorrect = (opt === q.correct);
+
+    var allBtns = document.querySelectorAll('#quizOptions .answer-btn');
+    allBtns.forEach(function(b){
+      b.disabled = true;
+      if(b.textContent === q.correct) b.classList.add('is-correct');
+    });
+    if(!isCorrect) btnEl.classList.add('is-wrong');
+
+    if(isCorrect){
+      state.correctCount++;
+      state.comboCurrent++;
+      state.comboSessionBest = Math.max(state.comboSessionBest, state.comboCurrent);
+    } else {
+      state.comboCurrent = 0;
+    }
+
+    showFeedback(isCorrect, q.correct);
+
+    if(isCorrect){
+      setTimeout(function(){
+        if(document.getElementById('screen-quiz').classList.contains('active')) advanceQuestion();
+      }, 900);
+    }
+  }
+
+  function showFeedback(correct, correctVal){
+    var banner = document.getElementById('feedbackBanner');
+    banner.className = 'feedback-banner show ' + (correct ? 'correct' : 'wrong');
+    document.getElementById('feedbackMsg').textContent = correct ? pick(POS_MSGS) : ('Doğru cavab: ' + correctVal);
+  }
+  function hideFeedback(){
+    document.getElementById('feedbackBanner').className = 'feedback-banner';
+  }
+
+  function advanceQuestion(){
+    state.qIndex++;
+    if(state.qIndex >= state.questions.length){
+      finishQuiz();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  async function finishQuiz(){
+    var total = state.questions.length;
+    var correct = state.correctCount;
+    var pct = correct/total;
+    var stars = pct >= 0.999 ? 3 : (pct >= 0.8 ? 2 : (pct >= 0.5 ? 1 : 0));
+    var xpGained = correct*2 + (stars===3?10:(stars===2?5:0));
+
+    var key = state.currentTable;
+    var entry = progress.tables[key];
+    entry.attempts = (entry.attempts||0) + 1;
+    entry.bestStars = Math.max(entry.bestStars||0, stars);
+    entry.bestCorrect = Math.max(entry.bestCorrect||0, correct);
+    progress.xp += xpGained;
+    progress.bestCombo = Math.max(progress.bestCombo||0, state.comboSessionBest);
+
+    await saveProgress(progress);
+    renderHeader();
+    renderResult(stars, correct, total, xpGained);
+    switchScreen('result');
+  }
+
+  function renderResult(stars, correct, total, xpGained){
+    var titles = {3:'Mükəmməl nəticə!',2:'Çox gözəl!',1:'Pis deyil!',0:'Bir də cəhd et!'};
+    document.getElementById('resultTitle').textContent = titles[stars];
+    var starsHtml = '';
+    for(var i=0;i<3;i++){
+      starsHtml += '<span class="big-star ' + (i<stars?'earned':'') + '">★</span>';
+    }
+    document.getElementById('resultStars').innerHTML = starsHtml;
+    document.getElementById('resultStats').textContent = 'Doğru cavab: ' + correct + '/' + total;
+    document.getElementById('resultXp').textContent = '+' + xpGained + ' XP qazandın';
+  }
+
+  function switchScreen(name){
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById('screen-' + name).classList.add('active');
+    document.querySelector('.main').scrollTop = 0;
+  }
+
+  /* ---------- Wiring ---------- */
+  function wireEvents(){
+    document.getElementById('lessonBackBtn').addEventListener('click', function(){ switchScreen('path'); });
+    document.getElementById('startQuizBtn').addEventListener('click', function(){ startQuiz(state.currentTable); });
+    document.getElementById('quizCloseBtn').addEventListener('click', function(){ renderPath(); switchScreen('path'); });
+    document.getElementById('continueBtn').addEventListener('click', advanceQuestion);
+    document.getElementById('retryBtn').addEventListener('click', function(){ startQuiz(state.currentTable); });
+    document.getElementById('mapBtn').addEventListener('click', function(){ renderPath(); switchScreen('path'); });
+
+    document.getElementById('resetBtn').addEventListener('click', function(){
+      document.getElementById('resetModal').classList.add('show');
+    });
+    document.getElementById('resetCancel').addEventListener('click', function(){
+      document.getElementById('resetModal').classList.remove('show');
+    });
+    document.getElementById('resetConfirm').addEventListener('click', async function(){
+      progress = defaultProgress();
+      await saveProgress(progress);
+      renderHeader();
+      renderPath();
+      document.getElementById('resetModal').classList.remove('show');
+      switchScreen('path');
+    });
+  }
+
+  async function init(){
+    wireEvents();
+    var raw = await loadProgress();
+    progress = normalizeProgress(raw);
+    renderHeader();
+    renderPath();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
